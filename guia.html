@@ -1,0 +1,383 @@
+
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .guide { padding: 1.5rem 0; max-width: 680px; }
+    .nav { display: flex; gap: 8px; margin-bottom: 2rem; flex-wrap: wrap; }
+    .nav-btn {
+        padding: 7px 18px; border-radius: 20px; border: none;
+        cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s;
+        opacity: 0.5;
+    }
+    .nav-btn.active { opacity: 1; transform: scale(1.04); }
+    .btn-git { background: #FAEEDA; color: #633806; }
+    .btn-git.active { background: #EF9F27; color: #fff; }
+    .btn-gh { background: #E6F1FB; color: #0C447C; }
+    .btn-gh.active { background: #378ADD; color: #fff; }
+    .btn-ij { background: #EEEDFE; color: #3C3489; }
+    .btn-ij.active { background: #7F77DD; color: #fff; }
+    .btn-flujo { background: #E1F5EE; color: #0F6E56; }
+    .btn-flujo.active { background: #1D9E75; color: #fff; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-header {
+        border-radius: var(--border-radius-lg); padding: 1rem 1.25rem;
+        margin-bottom: 1.25rem; display: flex; align-items: center; gap: 12px;
+    }
+    .header-git { background: #FAEEDA; }
+    .header-gh { background: #E6F1FB; }
+    .header-ij { background: #EEEDFE; }
+    .header-flujo { background: #E1F5EE; }
+    .header-icon {
+        width: 40px; height: 40px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .icon-git { background: #EF9F27; color: #fff; }
+    .icon-gh { background: #378ADD; color: #fff; }
+    .icon-ij { background: #7F77DD; color: #fff; }
+    .icon-flujo { background: #1D9E75; color: #fff; }
+    .header-title { font-size: 16px; font-weight: 500; }
+    .header-git .header-title { color: #633806; }
+    .header-gh .header-title { color: #0C447C; }
+    .header-ij .header-title { color: #3C3489; }
+    .header-flujo .header-title { color: #0F6E56; }
+    .header-desc { font-size: 13px; margin-top: 2px; }
+    .header-git .header-desc { color: #854F0B; }
+    .header-gh .header-desc { color: #185FA5; }
+    .header-ij .header-desc { color: #534AB7; }
+    .header-flujo .header-desc { color: #0F6E56; }
+
+    .card {
+        background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary);
+        border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px;
+        border-left-width: 3px; border-left-style: solid; border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
+    }
+    .card-git { border-left-color: #EF9F27; }
+    .card-gh { border-left-color: #378ADD; }
+    .card-ij { border-left-color: #7F77DD; }
+    .card-flujo-1 { border-left-color: #EF9F27; }
+    .card-flujo-2 { border-left-color: #378ADD; }
+    .card-flujo-3 { border-left-color: #EF9F27; }
+    .card-flujo-4 { border-left-color: #378ADD; }
+    .card-flujo-5 { border-left-color: #7F77DD; }
+
+    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .step-badge {
+        width: 26px; height: 26px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 11px; font-weight: 500; flex-shrink: 0; color: #fff;
+    }
+    .badge-git { background: #EF9F27; }
+    .badge-gh { background: #378ADD; }
+    .badge-ij { background: #7F77DD; }
+    .badge-green { background: #1D9E75; }
+    .badge-amber { background: #EF9F27; }
+    .badge-purple { background: #7F77DD; }
+    .card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+    .card-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+
+    .cmd-block {
+        border-radius: var(--border-radius-md); padding: 10px 14px; margin: 8px 0;
+        font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary);
+        background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary);
+    }
+    .cmd-block .comment { color: var(--color-text-tertiary); }
+    .cmd-block .kw { font-weight: 500; }
+    .kw-git { color: #BA7517; }
+    .kw-gh { color: #185FA5; }
+    .kw-ij { color: #534AB7; }
+
+    .tip {
+        border-radius: var(--border-radius-md); padding: 8px 12px;
+        font-size: 13px; margin-top: 8px; display: flex; gap: 8px; align-items: flex-start;
+    }
+    .tip-git { background: #FAEEDA; color: #854F0B; }
+    .tip-gh { background: #E6F1FB; color: #185FA5; }
+    .tip-ij { background: #EEEDFE; color: #534AB7; }
+    .tip-green { background: #E1F5EE; color: #0F6E56; }
+    .tip i { margin-top: 1px; flex-shrink: 0; }
+
+    .flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 10px 0; font-size: 12px; }
+    .flow-step {
+        border-radius: var(--border-radius-md); padding: 4px 10px; font-weight: 500;
+    }
+    .flow-step-git { background: #FAEEDA; color: #633806; }
+    .flow-step-gh { background: #E6F1FB; color: #0C447C; }
+    .flow-step-ij { background: #EEEDFE; color: #3C3489; }
+    .flow-arrow { color: var(--color-text-tertiary); }
+
+    .shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .shortcut { display: flex; justify-content: space-between; align-items: center; font-size: 12px; gap: 8px; }
+    .shortcut-key {
+        background: #EEEDFE; border-radius: 4px; padding: 2px 8px;
+        font-family: var(--font-mono); font-size: 11px; color: #3C3489; white-space: nowrap; flex-shrink: 0;
+    }
+    .shortcut-desc { color: var(--color-text-secondary); }
+
+    .tag {
+        display: inline-block; border-radius: 20px; padding: 2px 10px;
+        font-size: 11px; font-weight: 500; margin-right: 4px;
+    }
+    .tag-git { background: #FAEEDA; color: #633806; }
+    .tag-gh { background: #E6F1FB; color: #0C447C; }
+    .tag-ij { background: #EEEDFE; color: #3C3489; }
+</style>
+
+<div class="guide">
+    <h2 class="sr-only">Guía básica de Git, GitHub e IntelliJ</h2>
+
+    <div class="nav">
+        <button class="nav-btn btn-git active" onclick="show('git',this)"><i class="ti ti-git-branch" aria-hidden="true"></i> Git</button>
+        <button class="nav-btn btn-gh" onclick="show('github',this)"><i class="ti ti-brand-github" aria-hidden="true"></i> GitHub</button>
+        <button class="nav-btn btn-ij" onclick="show('intellij',this)"><i class="ti ti-device-laptop" aria-hidden="true"></i> IntelliJ</button>
+        <button class="nav-btn btn-flujo" onclick="show('flujo',this)"><i class="ti ti-route" aria-hidden="true"></i> Flujo completo</button>
+    </div>
+
+    <!-- GIT -->
+    <div id="git" class="section active">
+        <div class="section-header header-git">
+            <div class="header-icon icon-git"><i class="ti ti-git-branch" aria-hidden="true"></i></div>
+            <div>
+                <div class="header-title">Git — control de versiones local</div>
+                <div class="header-desc">Rastrea cambios en tu código. Cada commit es una foto del proyecto.</div>
+            </div>
+        </div>
+
+        <div class="card card-git">
+            <div class="card-header"><div class="step-badge badge-git">1</div><span class="card-title">Instalación y configuración</span></div>
+            <div class="card-body">Instalá desde <strong>git-scm.com</strong>, luego configurá tu identidad:
+                <div class="cmd-block">
+                    <span class="kw kw-git">git config</span> --global user.name <span style="color:#1D9E75">"Tu Nombre"</span><br>
+                    <span class="kw kw-git">git config</span> --global user.email <span style="color:#1D9E75">"tu@email.com"</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-git">
+            <div class="card-header"><div class="step-badge badge-git">2</div><span class="card-title">Iniciar un repositorio</span></div>
+            <div class="card-body">
+                <div class="cmd-block">
+                    <span class="kw kw-git">git init</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># crea repo en la carpeta actual</span><br>
+                    <span class="kw kw-git">git clone</span> &lt;url&gt; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># copia un repo existente</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-git">
+            <div class="card-header"><div class="step-badge badge-git">3</div><span class="card-title">El ciclo diario</span></div>
+            <div class="card-body">
+                <div class="flow">
+                    <span class="flow-step flow-step-git">Trabajar</span><span class="flow-arrow">→</span>
+                    <span class="flow-step flow-step-git">git add</span><span class="flow-arrow">→</span>
+                    <span class="flow-step flow-step-git">git commit</span><span class="flow-arrow">→</span>
+                    <span class="flow-step flow-step-git">git push</span>
+                </div>
+                <div class="cmd-block">
+                    <span class="kw kw-git">git status</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># ver qué cambió</span><br>
+                    <span class="kw kw-git">git add</span> . &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># staging de todo</span><br>
+                    <span class="kw kw-git">git add</span> archivo.js &nbsp;&nbsp;<span class="comment"># staging específico</span><br>
+                    <span class="kw kw-git">git commit</span> -m <span style="color:#1D9E75">"mensaje"</span> &nbsp;<span class="comment"># guardar</span><br>
+                    <span class="kw kw-git">git push</span> origin main &nbsp;&nbsp;<span class="comment"># subir al remoto</span>
+                </div>
+                <div class="tip tip-git"><i class="ti ti-bulb" aria-hidden="true"></i> Mensajes descriptivos: "Agrega validación de formulario", no "cambios".</div>
+            </div>
+        </div>
+
+        <div class="card card-git">
+            <div class="card-header"><div class="step-badge badge-git">4</div><span class="card-title">Ramas (branches)</span></div>
+            <div class="card-body">
+                <div class="cmd-block">
+                    <span class="kw kw-git">git branch</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># ver ramas</span><br>
+                    <span class="kw kw-git">git checkout</span> -b nueva-feature &nbsp;<span class="comment"># crear y cambiar</span><br>
+                    <span class="kw kw-git">git merge</span> nueva-feature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># fusionar en main</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-git">
+            <div class="card-header"><div class="step-badge badge-git">5</div><span class="card-title">Comandos útiles extra</span></div>
+            <div class="card-body">
+                <div class="cmd-block">
+                    <span class="kw kw-git">git log</span> --oneline &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># historial compacto</span><br>
+                    <span class="kw kw-git">git pull</span> origin main &nbsp;<span class="comment"># traer cambios del remoto</span><br>
+                    <span class="kw kw-git">git diff</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># ver diferencias sin commitear</span><br>
+                    <span class="kw kw-git">git stash</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># guardar cambios temporalmente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GITHUB -->
+    <div id="github" class="section">
+        <div class="section-header header-gh">
+            <div class="header-icon icon-gh"><i class="ti ti-brand-github" aria-hidden="true"></i></div>
+            <div>
+                <div class="header-title">GitHub — repositorio remoto y colaboración</div>
+                <div class="header-desc">Tu código en la nube. Colaborá con Pull Requests e Issues.</div>
+            </div>
+        </div>
+
+        <div class="card card-gh">
+            <div class="card-header"><div class="step-badge badge-gh">1</div><span class="card-title">Crear y conectar un repositorio</span></div>
+            <div class="card-body">Creá el repo en github.com (<strong>+</strong> → New repository), luego conectalo:
+                <div class="cmd-block">
+                    <span class="kw kw-gh">git remote add</span> origin https://github.com/usuario/repo.git<br>
+                    <span class="kw kw-gh">git push</span> -u origin main
+                </div>
+                <div class="tip tip-gh"><i class="ti ti-info-circle" aria-hidden="true"></i> Con <code>-u</code> configurás el upstream. Después solo necesitás <code>git push</code>.</div>
+            </div>
+        </div>
+
+        <div class="card card-gh">
+            <div class="card-header"><div class="step-badge badge-gh">2</div><span class="card-title">Fork y Clone</span></div>
+            <div class="card-body">Para contribuir a proyectos ajenos: hacé <strong>Fork</strong> (copia en tu cuenta), luego:
+                <div class="cmd-block">
+                    <span class="kw kw-gh">git clone</span> https://github.com/TU-USUARIO/repo.git
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-gh">
+            <div class="card-header"><div class="step-badge badge-gh">3</div><span class="card-title">Pull Request (PR)</span></div>
+            <div class="card-body">
+                <div class="flow">
+                    <span class="flow-step flow-step-gh">Crear branch</span><span class="flow-arrow">→</span>
+                    <span class="flow-step flow-step-gh">Cambios</span><span class="flow-arrow">→</span>
+                    <span class="flow-step flow-step-gh">Push</span><span class="flow-arrow">→</span>
+                    <span class="flow-step flow-step-gh">Abrir PR</span><span class="flow-arrow">→</span>
+                    <span class="flow-step flow-step-gh">Merge</span>
+                </div>
+                Al hacer push de una nueva rama, GitHub te muestra el botón <strong>Compare &amp; pull request</strong> automáticamente.
+            </div>
+        </div>
+
+        <div class="card card-gh">
+            <div class="card-header"><div class="step-badge badge-gh">4</div><span class="card-title">Issues y README</span></div>
+            <div class="card-body">
+                Los <strong>Issues</strong> son tareas o bugs. Referencialos en commits con <code>#número</code>. En el PR podés escribir <code>Closes #5</code> para cerrarlo automáticamente al hacer merge.<br><br>
+                El <strong>README.md</strong> es la portada de tu repo: describí qué hace el proyecto, cómo instalarlo y cómo usarlo.
+            </div>
+        </div>
+
+        <div class="card card-gh">
+            <div class="card-header"><div class="step-badge badge-gh">5</div><span class="card-title">Autenticación con SSH</span></div>
+            <div class="card-body">
+                <div class="cmd-block">
+                    <span class="kw kw-gh">ssh-keygen</span> -t ed25519 -C <span style="color:#1D9E75">"tu@email.com"</span><br>
+                    <span class="comment"># Pegá ~/.ssh/id_ed25519.pub en</span><br>
+                    <span class="comment"># GitHub → Settings → SSH and GPG Keys</span>
+                </div>
+                <div class="tip tip-gh"><i class="ti ti-lock" aria-hidden="true"></i> Con SSH no necesitás ingresar usuario y contraseña en cada push.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTELLIJ -->
+    <div id="intellij" class="section">
+        <div class="section-header header-ij">
+            <div class="header-icon icon-ij"><i class="ti ti-device-laptop" aria-hidden="true"></i></div>
+            <div>
+                <div class="header-title">IntelliJ IDEA — Git integrado</div>
+                <div class="header-desc">Hacé casi todo sin escribir comandos. Git nativo en el IDE.</div>
+            </div>
+        </div>
+
+        <div class="card card-ij">
+            <div class="card-header"><div class="step-badge badge-ij">1</div><span class="card-title">Clonar o abrir un proyecto</span></div>
+            <div class="card-body"><strong>File → New → Project from Version Control</strong> para clonar. Si ya tenés el proyecto, al abrirlo IntelliJ detecta el repo Git automáticamente.</div>
+        </div>
+
+        <div class="card card-ij">
+            <div class="card-header"><div class="step-badge badge-ij">2</div><span class="card-title">Commit desde el IDE</span></div>
+            <div class="card-body">Abrí el panel <strong>Commit</strong> con <span style="background:#EEEDFE;color:#3C3489;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);font-size:11px;">Ctrl+K</span>. Desde ahí:
+                <ul style="padding-left: 1rem; margin-top: 8px; line-height: 1.9;">
+                    <li>Tildás qué archivos incluir</li>
+                    <li>Escribís el mensaje del commit</li>
+                    <li>Hacés <strong>Commit and Push</strong> en un solo clic</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card card-ij">
+            <div class="card-header"><div class="step-badge badge-ij">3</div><span class="card-title">Branches en IntelliJ</span></div>
+            <div class="card-body">Hacé clic en el nombre de la rama (margen inferior derecho). Desde ahí podés crear, cambiar y fusionar ramas.
+                <div class="tip tip-ij"><i class="ti ti-git-merge" aria-hidden="true"></i> Para merge: desde main, clic derecho en la otra rama → Merge into Current.</div>
+            </div>
+        </div>
+
+        <div class="card card-ij">
+            <div class="card-header"><div class="step-badge badge-ij">4</div><span class="card-title">Historial y diferencias</span></div>
+            <div class="card-body"><strong>Git → Show Git Log</strong> abre el historial visual. Filtrá por autor, fecha o archivo. Al hacer clic en un commit ves exactamente qué cambió (diff visual coloreado).</div>
+        </div>
+
+        <div class="card card-ij">
+            <div class="card-header"><div class="step-badge badge-ij">5</div><span class="card-title">Atajos esenciales</span></div>
+            <div class="card-body">
+                <div class="shortcut-grid">
+                    <div class="shortcut"><span class="shortcut-desc">Commit</span><span class="shortcut-key">Ctrl+K</span></div>
+                    <div class="shortcut"><span class="shortcut-desc">Push</span><span class="shortcut-key">Ctrl+Shift+K</span></div>
+                    <div class="shortcut"><span class="shortcut-desc">Pull</span><span class="shortcut-key">Ctrl+T</span></div>
+                    <div class="shortcut"><span class="shortcut-desc">Ver cambios</span><span class="shortcut-key">Alt+9</span></div>
+                    <div class="shortcut"><span class="shortcut-desc">Historial archivo</span><span class="shortcut-key">Alt+9 → Log</span></div>
+                    <div class="shortcut"><span class="shortcut-desc">Resolver conflicto</span><span class="shortcut-key">Git → Conflicts</span></div>
+                </div>
+                <div class="tip tip-ij" style="margin-top:10px;"><i class="ti ti-apple" aria-hidden="true"></i> En Mac reemplazá Ctrl por ⌘ en la mayoría de los atajos.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLUJO COMPLETO -->
+    <div id="flujo" class="section">
+        <div class="section-header header-flujo">
+            <div class="header-icon icon-flujo"><i class="ti ti-route" aria-hidden="true"></i></div>
+            <div>
+                <div class="header-title">Flujo completo — de cero a producción</div>
+                <div class="header-desc">Cómo se usan Git, GitHub e IntelliJ juntos en un proyecto real.</div>
+            </div>
+        </div>
+
+        <div class="card card-flujo-1">
+            <div class="card-header"><div class="step-badge badge-amber">1</div><span class="card-title"><span class="tag tag-git">Git</span> Setup inicial (una sola vez)</span></div>
+            <div class="card-body">Creás el repo en GitHub, lo clonás con IntelliJ (<strong>File → New → Project from Version Control</strong>) y configurás nombre/email en Git.</div>
+        </div>
+
+        <div class="card card-flujo-2">
+            <div class="card-header"><div class="step-badge badge-gh">2</div><span class="card-title"><span class="tag tag-gh">Git</span> Crear una rama para cada tarea</span></div>
+            <div class="card-body">Nunca trabajes directo en <code>main</code>. Para cada feature o fix:
+                <div class="cmd-block"><span class="kw kw-git">git checkout</span> -b feature/login</div>
+                O desde IntelliJ: clic en la rama → New Branch.
+            </div>
+        </div>
+
+        <div class="card card-flujo-3">
+            <div class="card-header"><div class="step-badge badge-amber">3</div><span class="card-title"><span class="tag tag-ij">IntelliJ</span> Trabajar y commitear seguido</span></div>
+            <div class="card-body">Commits pequeños y frecuentes son mejor que uno gigante al final. Desde IntelliJ: Ctrl+K → tildar archivos → escribir mensaje → Commit.</div>
+        </div>
+
+        <div class="card card-flujo-4">
+            <div class="card-header"><div class="step-badge badge-gh">4</div><span class="card-title"><span class="tag tag-gh">GitHub</span> Push y Pull Request</span></div>
+            <div class="card-body">Cuando terminaste: Ctrl+Shift+K para push. En GitHub aparece <strong>Compare &amp; pull request</strong>. Describís los cambios y pedís review si trabajás en equipo.</div>
+        </div>
+
+        <div class="card card-flujo-5">
+            <div class="card-header"><div class="step-badge badge-purple">5</div><span class="card-title"><span class="tag tag-git">Git</span> Merge y actualización</span></div>
+            <div class="card-body">Aprobado el PR, se hace merge en GitHub. Luego localmente:
+                <div class="cmd-block">
+                    <span class="kw kw-git">git checkout</span> main<br>
+                    <span class="kw kw-git">git pull</span> origin main
+                </div>
+                <div class="tip tip-green"><i class="ti ti-check" aria-hidden="true"></i> ¡Listo! Este ciclo se repite para cada nueva funcionalidad.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function show(id, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+    }
+</script>
